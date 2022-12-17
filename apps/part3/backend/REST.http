@@ -1,0 +1,74 @@
+Backend API using Java
+
+###
+POST https://backend.xxx.japaneast.azurecontainerapps.io/api/v1/todos
+content-type: application/json
+
+{
+    "title": "荷物の発送",
+    "task": "梱包した荷物を宅急便で送る",
+    "duedate": "2022-11-11" ,
+    "status": "Pending"
+}
+
+###
+GET https://backend.xxx.japaneast.azurecontainerapps.io/api/v1/todos
+
+###
+PUT https://backend.xxx.japaneast.azurecontainerapps.io/api/v1/todos/1
+content-type: application/json
+
+{
+    "title": "荷物の発送",
+    "task": "梱包した荷物を宅急便で送る",
+    "duedate": "2022-11-15" ,
+    "status": "Completed"
+}
+
+###
+DELETE https://backend.xxx.japaneast.azurecontainerapps.io/api/v1/todos/1
+
+
+###
+GET https://backend.xxx.japaneast.azurecontainerapps.io/api/v1/schedule
+
+
+###
+<参考> Rest Clientでは変数を使うこともできます。
+###
+Backend API using Java
+
+@backend_url = https://backend.redocean-ecc1c18a.japaneast.azurecontainerapps.io
+###
+
+###
+POST {{backend_url}}/api/v1/todos
+content-type: application/json
+
+{
+    "title": "荷物の発送",
+    "task": "梱包した荷物を宅急便で送る",
+    "duedate": "2022-11-11" ,
+    "status": "Pending"
+}
+
+###
+GET {{backend_url}}/api/v1/todos
+
+###
+PUT {{backend_url}}/api/v1/todos/1
+content-type: application/json
+
+{
+    "title": "荷物の発送",
+    "task": "梱包した荷物を宅急便で送る",
+    "duedate": "2022-11-15" ,
+    "status": "Completed"
+}
+
+###
+DELETE {{backend_url}}/api/v1/todos/2
+
+
+###
+GET {{backend_url}}/api/v1/schedule

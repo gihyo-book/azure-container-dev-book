@@ -1,0 +1,46 @@
+name: "CI(Part1)"
+
+on:
+  push:
+    tags-ignore:
+      - "*"
+    branches:
+      - "main"
+    paths:
+      - 'apps/part1/**'
+      - '.github/workflows/part1_ci.yml'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - 'apps/part1/**'
+      - '.github/workflows/part1_ci.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: "Test"
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Java Setup"
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'microsoft'
+          cache: maven
+
+      - name: "Unit test"
+        working-directory: ./apps/part1
+        run: make test
+
+      - name: "Smoke test"
+        working-directory: ./apps/part1
+        run: make docker-smoke-test-with-build

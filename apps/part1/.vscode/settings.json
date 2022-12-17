@@ -1,0 +1,4 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "maven.executable.path": "/usr/local/sdkman/candidates/maven/current/bin/mvn"
+}

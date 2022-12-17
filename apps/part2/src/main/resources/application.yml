@@ -1,0 +1,15 @@
+server:
+  port: 8080 # HTTP待ち受けポート
+
+  # クロスサイトになる場合は Cookie(JSESSIONID) を送らない
+  # https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#third-party_cookies
+  servlet:
+    session:
+      cookie:
+        same-site: Strict
+
+# Profile Specific Files でプロファイルに応じた設定をします。
+# embedded プロファイルではデータベースは組み込みで動きます。
+spring:
+  profiles:
+    active: embedded
