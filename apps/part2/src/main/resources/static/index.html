@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My ToDo List</title>
+  <link href="/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <!-- 第6章で使用、ナビゲーションバーとサインアウトボタン -->
+  <nav class="navbar navbar-light bg-primary">
+    <div class="container" >
+      <a class="navbar-brand" href="#" style="color: #ffffff;">TODO List</a>
+      <div class="text-end">
+        <button type="button" id="sign-out-btn" class="btn btn-primary btn-sm"></button>
+      </div>
+    </nav>
+  <!-- タスク登録のためのコンテナ -->
+  <div class="container">
+    <form id="new-todo">
+      <div class="row">
+        <div class="col">
+          <label class="form-label" for="new-todo-title">タイトル</label>
+          <input type="text" id="new-todo-title" name="title" class="form-control" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label class="form-label" for="new-todo-duedate">締め切り</label>
+          <input type="date" id="new-todo-duedate" name="duedate" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label class="form-label" for="new-todo-memo">メモ</label>
+          <textarea id="new-todo-memo" name="memo" class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col col-3">
+          <button type="button" id="new-todo-submit" class="btn btn-primary">送信</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- ToDoリストを表示するためのコンテナ -->
+  <div class="container">
+    <div class="row">
+      <div class="col col-2">
+        <button type="button" id="refresh-todo" class="btn btn-primary">更新</button>
+      </div>
+    </div>
+    <div class="row">
+      <table class="table table-striped" id="todolist-table">
+        <thead>
+          <tr>
+            <th scope="col col-1">#</th>
+            <th scope="col">タイトル</th>
+            <th scope="col">メモ</th>
+            <th scope="col">ステータス</th>
+            <th scope="col">締め切り</th>
+            <th scope="col">削除</th>
+          </tr>
+        </thead>
+        <!-- ボタン操作などのイベントでtbodyをJavaScriptで更新する -->
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <script src="/bootstrap.bundle.min.js"></script>
+  <script src="/index.js"></script>
+</body>
+
+</html>

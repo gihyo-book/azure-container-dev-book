@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    # H2 データベースを embedded プロファイルでは使う
+    embedded-database-connection: H2
+
+  # データベースのスキーマ
+  # https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.data-initialization.using-basic-sql-scripts
+  sql:
+    init:
+      mode: embedded
+      schema-locations: classpath:schema.sql
+
+  jdbc:
+    template:
+      # クエリタイムアウト(秒)
+      query-timeout: 5
+
+logging:
+  level:
+    # 実行した SQL をログ出力する
+    org.springframework.jdbc.core.JdbcTemplate: trace
+
+    # TestRestTemplate のログ出力をする
+    org.springframework.web.client.RestTemplate: trace
+    org.apache.http.wire: trace

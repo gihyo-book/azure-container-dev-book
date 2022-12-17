@@ -1,0 +1,17 @@
+{
+    "folders": [
+        {
+            "name": "part1",
+            "path": "../apps/part1"
+        },
+        {
+            "name": "part2",
+            "path": "../apps/part2"
+        },
+        {
+            "name": "part3",
+            "path": "../apps/part3"
+        },
+    ],
+    "settings": {}
+}

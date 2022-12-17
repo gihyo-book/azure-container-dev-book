@@ -1,0 +1,16 @@
+###
+Schedule API using Java
+
+###
+GET https://schedule.xxx.japaneast.azurecontainerapps.io/schedule
+
+
+
+###
+<参考> Rest Clientでは変数を使うこともできます。
+###
+@schedule_url = https://schedule.xxx.japaneast.azurecontainerapps.io
+###
+
+###
+GET {{schedule_url}}/shcedule

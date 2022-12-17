@@ -1,0 +1,67 @@
+# Schedule API のEndpointを指定してください
+# schedule:
+#   api:
+#     url: https://schedule.xxx.japaneast.azurecontainerapps.io/schedule
+
+# # Resilience4j の設定
+resilience4j:
+  retry: #リトライの設定
+    instances:
+      scheduleRetry:
+        maxRetryAttempts: 10
+        waitDuration: 1s
+
+#   ratelimiter:  #レート制限の設定
+#     limiters:
+#       scheduleLimiter: # レート制限の名称
+#         limit-for-period: 10 # 単位時間あたりに実行可能な処理数
+#         limit-refresh-period-in-millis: 1000 # 単位時間（ミリ秒）
+#         timeout-in-millis: 10000 # タイムアウト時間（ミリ秒）
+
+#   circuitbreaker:  #サーキットブレーカーの設定
+#     backends:
+#       scheduleCircuit: # サーキットブレーカーの名称
+#         # Closed 状態で利用するリングバッファのサイズ
+#         truering-buffer-size-in-closed-state: 5
+#         # HalfOpen 状態で利用するリングバッファのサイズ
+#         ring-buffer-size-in-half-open-state: 3
+#         # Open 状態で待機する時間（ミリ秒）
+#         wait-duration-in-open-state : 5000
+#         # Open 状態へ遷移する閾値（％）
+#         failure-rate-threshold: 50
+
+
+spring:
+  main:
+    cloud-platform: kubernetes
+
+  # #  Azure Database for MySQL-flexible で動かすときは以下を有効にしてください(ローカル環境テスト用)
+  # datasource:
+  #   username: azureadmin
+  #   url: jdbc:mysql://xxxx.mysql.database.azure.com:3306/backenddb?serverTimezone=UTC
+  #   connectionProperties: useUnicode=true;characterEncoding=utf-8;
+  #   password: xxxx
+  jpa:
+    show-sql: 'true'
+    hibernate:
+      ddl-auto: update
+
+  # # インメモリデータベース(H2)で動かすときは以下を有効にしてください
+  # datasource:
+  #   driverClassName: org.h2.Driver
+  #   password: ''
+  #   username: sa
+  #   url: jdbc:h2:mem:testdb
+  # h2:
+  #   console:
+  #     enabled: 'false'
+  # jpa:
+  #   properties:
+  #     hibernate:
+  #       dialect: org.hibernate.dialect.H2Dialect
+  #   show-sql: 'true'
+  #   hibernate:
+  #     ddl-auto: update
+
+server:
+  port: '8080'

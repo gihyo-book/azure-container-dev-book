@@ -1,0 +1,97 @@
+name: "Release(Part1)"
+
+on:
+  push:
+    tags:
+    - "part1-v*.*.*"
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    paths:
+      - '.github/workflows/part1_release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+
+env:
+  PACKAGE_NAME: "book-devcontainer-part1"
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-20.04
+    outputs:
+      repo_owner: ${{ steps.prep.outputs.repo_owner }}
+
+    steps:
+      # コンテナイメージ名に使う文字列を準備する
+      # 大文字はエラーとなるため、GitHubから動的に取得する文字列は小文字に変換する https://github.com/docker/build-push-action/issues/37
+      - name: "Prepare"
+        id: prep
+        run: |
+          if [[ ${{ github.event_name }} == 'pull_request' || ${{ github.event_name }} == 'workflow_dispatch' ]]; then
+            TAG=test
+          else
+            TAG=$(echo ${GITHUB_REF} | awk -F '/' '{print $3}' | sed 's/part1-//g')
+          fi
+          REPOSITORY_OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
+          REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')
+          echo "repo_owner=${REPOSITORY_OWNER}" >> $GITHUB_OUTPUT
+          echo "repo_name=${REPO_NAME}" >> $GITHUB_OUTPUT
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      # ここからセキュリティスキャン
+      - name: "Build container for scan"
+        working-directory: ./apps/part1
+        run: docker build -t ghcr.io/${{ steps.prep.outputs.repo_name }}:scan-tmp .
+
+      - name: "Scan container"
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ghcr.io/${{ steps.prep.outputs.repo_name }}:scan-tmp'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+          trivyignores: '.github/workflows/trivy/.trivyignore'
+
+      # ここからリリース向けのイメージ作成とレジストリへのpush
+      - name: "QEMU Setup"
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: arm64
+
+      - name: "Docker buildx Setup"
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: "Registry Login"
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ steps.prep.outputs.repo_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Build & Publish"
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          builder: ${{ steps.buildx.outputs.name }}
+          context: ./apps/part1
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: |
+            ghcr.io/${{ steps.prep.outputs.repo_owner }}/${{ env.PACKAGE_NAME }}:${{ steps.prep.outputs.tag }}
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.url=${{ github.event.repository.html_url }}
+            org.opencontainers.image.revision=${{ github.sha }}

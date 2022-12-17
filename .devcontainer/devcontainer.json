@@ -1,0 +1,44 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.231.6/containers/java
+{
+	"name": "Java",
+	"build": {
+		// コンテナビルドで使うDockerfileを指定
+		"dockerfile": "Dockerfile",
+		"args": {
+			// コンテナビルド時に渡す引数を指定
+			"VARIANT": "17-bullseye",
+			"INSTALL_MAVEN": "true",
+			"INSTALL_GRADLE": "false",
+			"NODE_VERSION": "lts/*"
+		}
+	},
+	// VS Codeと拡張の設定
+	"settings": {
+		"java.jdt.ls.java.home": "/docker-java-home"
+	},
+	// VS Codeに導入する拡張を指定
+	"extensions": [
+		"vscjava.vscode-java-pack",
+		"redhat.fabric8-analytics",
+		"humao.rest-client",
+		"AquaSecurityOfficial.trivy-vulnerability-scanner"
+	],
+	// Dev Containerのユーザ
+	"remoteUser": "vscode",
+	// Dev Containerの追加機能
+	"features": {
+		"ghcr.io/devcontainers/features/docker-from-docker:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/git:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/github-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"version": "latest"
+		}
+	}
+}
