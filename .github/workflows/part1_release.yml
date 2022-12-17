@@ -4,13 +4,6 @@ on:
   push:
     tags:
     - "part1-v*.*.*"
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-    paths:
-      - '.github/workflows/part1_release.yml'
   workflow_dispatch:
 permissions:
   contents: read
