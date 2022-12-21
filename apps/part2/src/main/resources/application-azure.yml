@@ -12,3 +12,5 @@ spring:
     init:
       mode: always
       schema-locations: classpath:azuredatabaseschema.sql
+  session:
+    store-type: redis
