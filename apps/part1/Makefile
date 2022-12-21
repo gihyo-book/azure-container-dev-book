@@ -13,7 +13,7 @@ build:
 	mvn clean package
 
 docker-build:
-	docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+	docker compose build --no-cache
 
 docker-smoke-test:
 	docker compose up --exit-code-from smoke-test
