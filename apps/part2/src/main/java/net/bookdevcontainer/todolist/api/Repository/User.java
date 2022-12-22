@@ -1,4 +1,4 @@
-package net.bookdevcontainer.todolist.api.Repository;
+package net.bookdevcontainer.todolist.api.repository;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

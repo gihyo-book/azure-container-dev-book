@@ -3,13 +3,14 @@ package net.bookdevcontainer.todolist.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.web.bind.annotation.RestController;
-import net.bookdevcontainer.todolist.api.Repository.User;
-import net.bookdevcontainer.todolist.api.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import net.bookdevcontainer.todolist.api.repository.User;
+import net.bookdevcontainer.todolist.api.repository.UserRepository;
 
 @RestController
 @RequestMapping("/")
