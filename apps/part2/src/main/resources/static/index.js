@@ -137,7 +137,7 @@
     }
 
     //------------------- 第6章で使用するサインアウト -------------------
-    const signOutLink = "/.auth/logout?post_logout_redirect_uri=/";
+    const signOutLink = "/.auth/logout?post_logout_redirect_uri=" + encodeURI("/?a=") + new Date().getTime(); 
     let isSignedIn = false;
     let userId = "?";
 
