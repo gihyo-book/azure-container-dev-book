@@ -1,5 +1,5 @@
 SHELL = /bin/bash
-IMAGE_NAME ?= book-devcontainer-part1
+IMAGE_NAME ?= azcondevbook-part1
 IMAGE_TAG ?= local
 export IMAGE_NAME
 export IMAGE_TAG
