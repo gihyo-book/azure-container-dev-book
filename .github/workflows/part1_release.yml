@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 env:
-  PACKAGE_NAME: "book-devcontainer-part1"
+  PACKAGE_NAME: "azcondevbook-part1"
 
 jobs:
   release:
