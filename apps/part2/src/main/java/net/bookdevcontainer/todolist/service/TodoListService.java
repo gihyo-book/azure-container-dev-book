@@ -28,7 +28,7 @@ public class TodoListService {
 
   private static final String SQL_CREATE_TASK = "INSERT INTO task (`user`, `status`, title, dueDate, memo, createdOn, updatedOn) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-  private static final String SQL_UPDATE_TASK = "UPDATE task SET title=?, dueDate=?, memo=?, `status`=? WHERE id=? and `user`=?";
+  private static final String SQL_UPDATE_TASK = "UPDATE task SET title=?, dueDate=?, memo=?, `status`=?, updatedOn=? WHERE id=? and `user`=?";
 
   private static final String SQL_DELETE_TASK = "DELETE FROM task WHERE id=? and `user`=?";
 
@@ -69,7 +69,9 @@ public class TodoListService {
   public int updateTaskById(String user, int id, String title, String memo, TodoStatus status, LocalDate dueDate) {
     sometimesRaiseException();
 
-    return jdbcTemplate.update(SQL_UPDATE_TASK, title, dueDate, memo, status.toString(), id, user);
+    var now = Timestamp.valueOf(ZonedDateTime.now().toLocalDateTime());
+
+    return jdbcTemplate.update(SQL_UPDATE_TASK, title, dueDate, memo, status.toString(), now, id, user);
   }
 
   public int deleteTaskById(String user, int id) {
