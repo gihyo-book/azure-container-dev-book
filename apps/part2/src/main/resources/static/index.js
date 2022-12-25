@@ -33,7 +33,6 @@
                 "memo": memo
             })
         }).then(res => {
-            // ToDo の作成に成功した際はフォームをクリアする。
             $.querySelector("#new-todo-title").value = "";
             $.querySelector("#new-todo-duedate").valueAsDate = new Date();
             $.querySelector("#new-todo-memo").value = "";
