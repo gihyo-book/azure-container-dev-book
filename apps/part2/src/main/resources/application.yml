@@ -10,6 +10,7 @@ server:
 
 # Profile Specific Files でプロファイルに応じた設定をします。
 # embedded プロファイルではデータベースは組み込みで動きます。
+# azure プロファイルに変更すると、Azure 上にデプロイした際に使用される設定に切り替わります。
 spring:
   profiles:
     active: embedded

@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: 'jdbc:mysql://<resource name for mysql>.mysql.database.azure.com:3306/defaultdb'
+    username: myadmin
+    password: <type your password>
+  # データベースのスキーマ
+  # https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto.data-initialization.using-basic-sql-scripts
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:azuredatabaseschema.sql
+  session:
+    store-type: redis
