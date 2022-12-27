@@ -38,11 +38,11 @@ public class TaskController {
 	public ResponseEntity<List<Task>> getAllTasks(@RequestParam(required = false) String title) {
 
 		try {
-			List<Task> tasks = new ArrayList<Task>();
+			List<Task> tasks = new ArrayList<>();
 			if (title == null)
-				repository.findAll().forEach(tasks::add);
+			  tasks.addAll(repository.findAll());
 			else
-				repository.findByTitleContaining(title).forEach(tasks::add);
+			  tasks.addAll(repository.findByTitleContaining(title));
 			if (tasks.isEmpty()) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
@@ -59,11 +59,7 @@ public class TaskController {
 	@GetMapping("/todos/{id}")
 	public ResponseEntity<Task> getTaskById(@PathVariable("id") long id) {
 		Optional<Task> taskData = repository.findById(id);
-		if (taskData.isPresent()) {
-			return new ResponseEntity<>(taskData.get(), HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+		return taskData.map(task -> new ResponseEntity<>(task, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
 	}
 
 	@Operation(summary = "Todoリスト登録", description = "新しいTodoリストを1件登録します")
