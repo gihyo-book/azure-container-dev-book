@@ -1,0 +1,263 @@
+# 第10章: Container Appsでのコンテナアプリケーション開発ハンズオン
+
+## アプリケーション実行環境を作成する
+
+### リソースグループを作成する
+ENV_NAME=todo-part3
+az login
+RG_NAME=todo-part3-rg
+
+az group create \
+  -n $RG_NAME \
+  -l japaneast
+
+
+### ログを保存するLog	Analyticsを作成する
+az monitor log-analytics workspace create \
+  -g $RG_NAME \
+  -n $ENV_NAME-logs
+
+LOG_ID=$(
+  az monitor log-analytics workspace show \
+    -g $RG_NAME \
+    --workspace-name $ENV_NAME-logs \
+    --query id \
+    -o tsv
+)
+
+LOG_CUSTOMER_ID=$(
+  az monitor log-analytics workspace show \
+    -g $RG_NAME \
+    --workspace-name $ENV_NAME-logs \
+    --query customerId \
+    -o tsv
+)
+
+LOG_KEY=$(
+  az monitor log-analytics workspace get-shared-keys \
+    -g $RG_NAME \
+    --workspace-name $ENV_NAME-logs \
+    --query primarySharedKey \
+    -o tsv
+)
+
+echo $LOG_ID
+echo $LOG_CUSTOMER_ID
+echo $LOG_KEY
+
+az extension add --name application-insights
+
+az monitor app-insights component create \
+  --app $ENV_NAME-insights \
+  -l japaneast \
+  -g $RG_NAME \
+  --workspace $LOG_ID
+
+APPINSIGHTS_CONNECTION_STRING=$(
+  az monitor app-insights component show \
+  --app $ENV_NAME-insights \
+  -g $RG_NAME \
+  --query connectionString \
+  -o tsv
+)
+
+echo $APPINSIGHTS_CONNECTION_STRING
+
+
+### Container	Apps環境を作成する
+az extension add --name containerapp --upgrade
+az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.OperationalInsights
+
+az containerapp env create \
+  -n $ENV_NAME \
+  -g $RG_NAME \
+  -l japaneast \
+  --logs-workspace-id $LOG_CUSTOMER_ID \
+  --logs-workspace-key $LOG_KEY
+
+
+### データベースを作成する
+SUFFIX=$RANDOM
+SQL_SERVER=todos-database-$SUFFIX
+echo $SQL_SERVER
+
+SQL_USER=azureadmin
+SQL_PASS=<任意の値>
+
+az mysql flexible-server create \
+  -l japaneast \
+  -g $RG_NAME \
+  -n $SQL_SERVER \
+  --admin-user $SQL_USER \
+  --admin-password $SQL_PASS \
+  --sku-name Standard_B1ms \
+  --tier Burstable \
+  --public-access 0.0.0.0 \
+  --storage-size 32 \
+  --version 5.7
+
+az mysql flexible-server db create \
+  -g $RG_NAME \
+  --server-name $SQL_SERVER \
+  --database-name backenddb
+
+
+### コンテナレジストリを作成する
+ACR_NAME=todosacr$SUFFIX
+echo $ACR_NAME
+
+az acr create \
+  -g $RG_NAME \
+  -n $ACR_NAME \
+  -l japaneast\
+  --sku Basic \
+  --admin-enabled true
+
+
+## アプリケーションを開発する
+
+### schedule	APIを開発する
+cd apps/part3/schedule/
+
+az acr login --name $ACR_NAME
+
+tag=v1.0.0
+docker build -t $ACR_NAME.azurecr.io/schedule:$tag .
+docker push $ACR_NAME.azurecr.io/schedule:$tag
+
+IDENTITY=todo-identity-$SUFFIX
+az identity create \
+  -n $IDENTITY \
+  -g $RG_NAME
+
+IDENTITY_ID=$(
+  az identity show \
+  -n $IDENTITY \
+  -g $RG_NAME \
+  --query id \
+  -o tsv
+)
+
+echo $IDENTITY_ID
+
+az containerapp create \
+  -n schedule \
+  -g $RG_NAME \
+  --environment $ENV_NAME \
+  --user-assigned $IDENTITY_ID \
+  --registry-server $ACR_NAME.azurecr.io \
+  --image $ACR_NAME.azurecr.io/schedule:$tag \
+  --target-port 8083 \
+  --ingress 'external' \
+  --min-replicas 1 \
+  --max-replicas 1 \
+  --memory 4.0Gi \
+  --cpu 2.0 \
+  --secrets ai-connection-string=$APPINSIGHTS_CONNECTION_STRING \
+  --env-vars APPLICATIONINSIGHTS_CONNECTION_STRING=secretref:ai-connection-string
+
+az containerapp show \
+  -n schedule \
+  -g $RG_NAME \
+  --query properties.configuration.ingress.fqdn \
+  -o tsv
+
+
+### Javaでbackend	APIを開発する
+cd ../../../apps/part3/backend
+az acr login --name $ACR_NAME
+
+tag=v1.0.0
+docker build -t $ACR_NAME.azurecr.io/backend:$tag .
+docker push $ACR_NAME.azurecr.io/backend:$tag
+
+SCHEDULE_API=$(
+  az containerapp show \
+    -n schedule \
+    -g $RG_NAME \
+    --query properties.configuration.ingress.fqdn \
+    -o tsv
+  )
+
+echo $SCHEDULE_API
+
+az containerapp create \
+  -n backend \
+  -g $RG_NAME \
+  --environment $ENV_NAME \
+  --user-assigned $IDENTITY_ID \
+  --registry-server $ACR_NAME.azurecr.io \
+  --image $ACR_NAME.azurecr.io/backend:$tag \
+  --target-port 8080 \
+  --ingress 'external' \
+  --min-replicas 1 \
+  --max-replicas 1 \
+  --memory 4.0Gi \
+  --cpu 2.0 \
+  --secrets ai-connection-string=$APPINSIGHTS_CONNECTION_STRING \
+  --env-vars APPLICATIONINSIGHTS_CONNECTION_STRING=secretref:ai-connection-string schedule.api.url=https://$SCHEDULE_API/schedule
+
+echo $SQL_USER
+echo $SQL_PASS
+
+BACKEND_API=$(
+  az containerapp show \
+    -n backend \
+    -g $RG_NAME \
+    --query properties.configuration.ingress.fqdn \
+    -o tsv
+)
+
+echo $BACKEND_API
+
+
+### Reactでフロントエンドを開発する
+cd ../../../apps/part3/frontend/
+
+echo $BACKEND_API
+echo $APPINSIGHTS_CONNECTION_STRING
+
+// .envを修正
+```
+REACT_APP_BACKEND_API_URL="https://backend.<各自の値に変更>.japaneast.azurecontainerapps.io/api/v1"
+REACT_APP_APPINSIGHTS_CONNECTION_STRING="InstrumentationKey=xxx;IngestionEndpoint=xxx;LiveEndpoint=xxx"
+```
+
+az acr login --name $ACR_NAME
+
+tag=v1.0.0
+docker build -t $ACR_NAME.azurecr.io/frontend:$tag .
+docker push $ACR_NAME.azurecr.io/frontend:$tag
+
+az containerapp create \
+  -n frontend \
+  -g $RG_NAME \
+  --environment $ENV_NAME \
+  --user-assigned $IDENTITY_ID \
+  --registry-server $ACR_NAME.azurecr.io \
+  --image $ACR_NAME.azurecr.io/frontend:$tag \
+  --target-port 3000 \
+  --ingress 'external' \
+  --min-replicas 1 \
+  --max-replicas 1 \
+  --memory 4.0Gi \
+  --cpu 2.0
+
+az containerapp show \
+    -n frontend \
+    -g $RG_NAME \
+    --query properties.configuration.ingress.fqdn \
+    -o tsv
+
+
+# 第11章: Container Appsによるマルチコンテナの運用
+
+### 業務に影響が出ないようにbackend APIのバージョンアップをしてみよう
+cd apps/part3/backend/
+// ソースコードの修正
+
+git pull origin main
+git add *
+git commit -m "Update: リトライの修正"
+git push origin main

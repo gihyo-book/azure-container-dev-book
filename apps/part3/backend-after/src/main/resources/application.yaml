@@ -8,15 +8,15 @@ resilience4j:
   retry: #リトライの設定
     instances:
       scheduleRetry:
-        maxRetryAttempts: 10
+        max-attempts: 10
         waitDuration: 1s
 
 #   ratelimiter:  #レート制限の設定
 #     limiters:
 #       scheduleLimiter: # レート制限の名称
 #         limit-for-period: 10 # 単位時間あたりに実行可能な処理数
-#         limit-refresh-period-in-millis: 1000 # 単位時間（ミリ秒）
-#         timeout-in-millis: 10000 # タイムアウト時間（ミリ秒）
+#         limit-refresh-period: 1s # 単位時間（秒）
+#         timeout-duration: 10s # タイムアウト時間（秒）
 
 #   circuitbreaker:  #サーキットブレーカーの設定
 #     backends:
