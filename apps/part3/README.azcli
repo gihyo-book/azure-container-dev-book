@@ -110,7 +110,7 @@ echo $ACR_NAME
 az acr create \
   -g $RG_NAME \
   -n $ACR_NAME \
-  -l japaneast\
+  -l japaneast \
   --sku Basic \
   --admin-enabled true
 
@@ -261,3 +261,14 @@ git pull origin main
 git add *
 git commit -m "Update: リトライの修正"
 git push origin main
+
+
+# Appendix: クラウドネイティブアプリケーションをより進化させる
+
+## Kubernetesで動かすマルチコンテナシステム
+az extension add --name aks-preview
+az extension update --name aks-preview
+
+cd apps/part3/schedule/
+az aks draft create
+
