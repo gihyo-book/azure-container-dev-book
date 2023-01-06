@@ -110,7 +110,7 @@ echo $ACR_NAME
 az acr create \
   -g $RG_NAME \
   -n $ACR_NAME \
-  -l japaneast\
+  -l japaneast \
   --sku Basic \
   --admin-enabled true
 
