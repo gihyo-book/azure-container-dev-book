@@ -1,4 +1,3 @@
--- 1レコードがToDoリストのタスクに相当
 CREATE TABLE IF NOT EXISTS task (
    id INT NOT NULL AUTO_INCREMENT, -- 識別子
    `user` VARCHAR(64) NOT NULL, -- ユーザーID

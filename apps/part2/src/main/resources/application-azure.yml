@@ -11,6 +11,6 @@ spring:
   sql:
     init:
       mode: always
-      schema-locations: classpath:azuredatabaseschema.sql
+      schema-locations: classpath:azuredatabaseschema.sql # テストテーブル作成用クエリ
   session:
     store-type: redis
