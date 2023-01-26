@@ -1,6 +1,5 @@
 // package net.bookdevcontainer.todolist.api.repository;
 
-// import java.time.LocalDate;
 // import java.time.ZonedDateTime;
 // import javax.persistence.Entity;
 // import javax.persistence.GeneratedValue;
@@ -9,20 +8,10 @@
 
 
 // @Entity // This tells Hibernate to make a table out of this class
-// public class Task {
+// public class SNATTest {
 //   @Id
 //   @GeneratedValue(strategy=GenerationType.AUTO)
 //   private Integer id;
-
-//   private String user;
-
-//   private String status;
-
-//   private String title;
-
-//   private LocalDate dueDate;
-
-//   private String memo;
 
 //   private ZonedDateTime createdOn;
 
@@ -34,46 +23,6 @@
 
 //   public void setId(Integer id) {
 //     this.id = id;
-//   }
-
-//   public String getUser() {
-//     return user;
-//   }
-
-//   public void setUser(String user) {
-//     this.user = user;
-//   }
-
-//   public String getStatus() {
-//     return status;
-//   }
-
-//   public void setStatus(String status) {
-//     this.status = status;
-//   }
-
-//   public String getTitle() {
-//     return title;
-//   }
-
-//   public void setTitle(String title) {
-//     this.title = title;
-//   }
-
-//   public LocalDate getDueDate() {
-//     return dueDate;
-//   }
-
-//   public void setDueDate(LocalDate dueDate) {
-//     this.dueDate = dueDate;
-//   }
-
-//   public String getMemo() {
-//     return memo;
-//   }
-
-//   public void setMemo(String memo) {
-//     this.memo = memo;
 //   }
 
 //   public ZonedDateTime getCreatedOn() {
@@ -91,4 +40,5 @@
 //   public void setUpdatedOn(ZonedDateTime updatedOn) {
 //     this.updatedOn = updatedOn;
 //   }
+
 // }
