@@ -5,7 +5,7 @@ on:
     tags-ignore:
       - "*"
     branches:
-      - "main"
+      - "mrmt"
     paths:
       - 'apps/part1/**'
       - '.github/workflows/part1_ci.yml'
