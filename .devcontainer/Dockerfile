@@ -20,6 +20,10 @@ RUN if [ "${INSTALL_MAVEN}" = "true" ]; then su vscode -c "umask 0002 && . /usr/
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
+# fix: https://github.com/gihyo-book/azure-container-dev-book/pull/17
+RUN wget -qO - https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
+    && echo deb https://dl.yarnpkg.com/debian/ stable main | sudo tee /etc/apt/sources.list.d/yarn.list
+
 # (d4)
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends wget apt-transport-https gnupg lsb-release \
